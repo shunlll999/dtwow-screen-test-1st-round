@@ -27,6 +27,8 @@ services:
       - PORT=4001
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/dtwow?schema=public
       - FRONTEND_URL=http://localhost:3000
+      - JWT_SECRET=dev-only-change-me-in-production
+      - JWT_EXPIRES_IN=1d
     depends_on:
       postgres:
         condition: service_healthy
