@@ -6,3 +6,65 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ReservationAction {
+  RESERVE
+  CANCEL
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String
+  role          Role     @default(USER)
+  createdAt     DateTime @default(now())
+  reservations  Reservation[]
+  logs          ReservationLog[]
+
+  @@map("users")
+}
+
+model Reservation {
+  id          String   @id @default(uuid())
+  userId      String
+  concertId   String
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  concert     Concert  @relation(fields: [concertId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, concertId])
+  @@index([concertId])
+  @@map("reservations")
+}
+
+model Concert {
+  id              String        @id @default(uuid())
+  name            String
+  description     String
+  totalSeats      Int
+  reservedSeats   Int           @default(0)
+  reservations    Reservation[]
+  logs            ReservationLog[]
+
+  @@map("concerts")
+}
+
+model ReservationLog {
+  id          String            @id @default(uuid())
+  userId      String
+  concertId   String?
+  concertName String
+  action      ReservationAction
+  createdAt   DateTime          @default(now())
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  concert     Concert?          @relation(fields: [concertId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([concertId])
+  @@map("reservation_logs")
+}

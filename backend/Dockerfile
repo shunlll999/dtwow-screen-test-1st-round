@@ -7,7 +7,8 @@ RUN npm ci
 
 COPY . .
 RUN npx prisma generate
+RUN npm run build
 
 EXPOSE 4001
 
-CMD ["npm", "run", "start:dev"]
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/prisma/seed.js && node dist/main.js"]
