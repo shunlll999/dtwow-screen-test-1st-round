@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent, type SubmitEvent } from "react";
 import { ButtonView, InputView } from "@/components/ui";
 import { LockIcon, UserIcon } from "@/components/icons";
 import { authApi } from "@/lib/endpoints";
@@ -25,7 +25,7 @@ const LoginPageClient = () => {
     setForm((prev) => ({ ...prev, [key]: event.target.value }));
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     setErrors({});
@@ -86,7 +86,7 @@ const LoginPageClient = () => {
 
         {errors.form && <p className="text-danger text-sm text-center">{errors.form}</p>}
 
-        <ButtonView type="submit" text={submitting ? "Logging in…" : "Login"} onClick={() => {}} />
+        <ButtonView type="submit" text={submitting ? "Logging in…" : "Login"} />
       </form>
 
       <p className="text-center text-sm mt-6 text-muted-foreground">

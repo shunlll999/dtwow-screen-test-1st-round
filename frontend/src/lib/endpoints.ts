@@ -6,9 +6,9 @@ import type {
 
 export const authApi = {
   login: (email: string, password: string) =>
-    api<AuthResponse>('/login', { method: 'POST', body: { email, password }, token: null }),
+    api<AuthResponse>('/auth/login', { method: 'POST', body: { email, password }, token: null }),
   register: (name: string, email: string, password: string) =>
-    api<AuthResponse>('/register', {
+    api<AuthResponse>('/auth/register', {
       method: 'POST',
       body: { name, email, password },
       token: null,

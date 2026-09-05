@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent, type SubmitEvent } from "react";
 import { ButtonView, InputView } from "@/components/ui";
 import { UserIcon, LockIcon } from "@/components/icons";
 import { authApi } from "@/lib/endpoints";
@@ -27,7 +27,7 @@ const RegisterPageClient = () => {
     setForm((prev) => ({ ...prev, [key]: event.target.value }));
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (form.password !== form.confirmPassword) {
@@ -129,7 +129,6 @@ const RegisterPageClient = () => {
         <ButtonView
           type="submit"
           text={submitting ? "Creating account…" : "Create an account"}
-          onClick={() => {}}
         />
       </form>
 

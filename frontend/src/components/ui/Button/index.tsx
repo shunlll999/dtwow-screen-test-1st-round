@@ -1,6 +1,6 @@
 'use client';
 
-export const ButtonView = ({ text, onClick, type, color }: { text: string; onClick: () => void; type?: "button" | "submit" | "reset"; color?: "primary" | "secondary" }) => {
+export const ButtonView = ({ text, onClick, type, color }: { text: string; onClick?: () => void; type?: "button" | "submit" | "reset"; color?: "primary" | "secondary" }) => {
   const buttonColor = color === "secondary" ? "bg-secondary text-primary" : "bg-primary text-primary-foreground";
 
   return (
