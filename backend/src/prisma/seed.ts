@@ -9,9 +9,10 @@ async function main() {
 
   await prisma.user.upsert({
     where: { email: 'admin@datawow.com' },
-    update: {},
+    update: { name: 'Admin' },
     create: {
       email: 'admin@datawow.com',
+      name: 'Admin',
       passwordHash: adminPasswordHash,
       role: Role.ADMIN,
     },
@@ -19,9 +20,10 @@ async function main() {
 
   await prisma.user.upsert({
     where: { email: 'user@datawow.com' },
-    update: {},
+    update: { name: 'Test User' },
     create: {
       email: 'user@datawow.com',
+      name: 'Test User',
       passwordHash: userPasswordHash,
       role: Role.USER,
     },
