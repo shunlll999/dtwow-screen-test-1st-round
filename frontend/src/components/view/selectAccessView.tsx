@@ -32,7 +32,7 @@ export const SelectAccessView = () => {
           <ButtonView
             text="Enter Workspace"
             color="primary"
-            onClick={() => router.push("/workspace")}
+            onClick={() => router.push("/user")}
           />
         </div>
         <div className="items-center justify-between flex flex-col rounded-[10px] w-full bg-primary sm:flex-1 sm:aspect-[581/619] p-6 sm:p-8 md:p-10 shadow-[0px_4px_22px_0px_rgba(0,0,0,0.05)]">
@@ -50,7 +50,7 @@ export const SelectAccessView = () => {
           <ButtonView
             text="Enter Portal"
             color="secondary"
-            onClick={() => router.push("/workspace")}
+            onClick={() => router.push("/admin")}
           />
         </div>
       </div>
