@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,8 +12,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Free Concert Tickets',
-  description: 'Reserve free seats for upcoming concerts. One seat per person, per concert.',
+  title: 'Login',
+  description: 'Login to access your account.',
 };
 
 
@@ -25,6 +24,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full`}
     >
       <body className="min-h-full flex flex-col">
+        Login Layout
         <div className="flex-1 flex flex-col">{children}</div>
       </body>
     </html>
