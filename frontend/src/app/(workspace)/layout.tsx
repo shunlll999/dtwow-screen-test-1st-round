@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import { Providers } from "../provider";
+import AppShell from "@/components/layout/AppShell";
 
 export const metadata: Metadata = {
   title: "Workspace",
   description: "Workspace - You need to access your account.",
 };
 
-export default function WorkspaceLayout({ children }: LayoutProps<"/">) {
+export default function WorkspaceProvider({ children }: LayoutProps<"/">) {
   return (
-    <div className="min-h-full flex flex-col">
-      Workspace Layout
-      <Providers>{children}</Providers>
-    </div>
+    <Providers>
+      <AppShell>{children}</AppShell>
+    </Providers>
   );
 }

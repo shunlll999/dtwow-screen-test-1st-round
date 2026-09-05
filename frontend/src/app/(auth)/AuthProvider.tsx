@@ -21,8 +21,8 @@ interface AuthContextValue {
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
-export const dashboardPathFor = (role: Role) =>
-  role === "ADMIN" ? "/admin" : "/user";
+export const dashboardPathFor = (role: Role | "LOGIN") =>
+  role === "ADMIN" ? "/admin" : role === "USER" ? "/user" : "/login";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();

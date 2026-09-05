@@ -5,3 +5,7 @@ export { UserIcon } from "./userIcon";
 export { LockIcon } from "./lockIcon";
 export { EyeIcon } from "./eyeIcon";
 export { EyeSlashIcon } from "./eyeSlashIcon";
+export { HomeIcon } from "./HomeIcon";
+export { HistoryIcon } from "./HistoryIcon";
+export { SwitchIcon } from "./SwitchIcon";
+export { LogoutIcon } from "./LogoutIcon";
