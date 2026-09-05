@@ -22,10 +22,16 @@ import { CreateConcertDto } from './dto/create-concert.dto';
 export class ConcertsController {
   constructor(private readonly concertsService: ConcertsService) {}
 
-  @Roles(Role.USER)
+  @Roles(Role.ADMIN, Role.USER)
   @Get()
   findAll() {
     return this.concertsService.findAll();
+  }
+
+  @Roles(Role.ADMIN)
+  @Get('stats')
+  stats() {
+    return this.concertsService.stats();
   }
 
   @Roles(Role.ADMIN)

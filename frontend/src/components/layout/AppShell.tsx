@@ -46,30 +46,57 @@ const AppShell = ({
   const activeRole = role ?? roleFromPathname(pathname);
   const { title, nav } = SHELL_CONFIG[activeRole];
 
+  const navButtonClass = (active: boolean) =>
+    `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
+      active ? "bg-primary/10 font-medium" : "text-foreground hover:bg-muted"
+    }`;
+
   return (
-    <div className="min-h-screen flex">
-      <aside className="w-64 shrink-0 border-r border-border bg-card flex flex-col">
+    <div className="min-h-screen flex flex-col md:flex-row">
+      {/* Mobile top bar */}
+      <header className="md:hidden border-b border-border bg-card">
+        <div className="flex items-center gap-3 px-4 pt-4">
+          <h1 className="text-xl font-bold text-foreground">{title}</h1>
+          <button
+            type="button"
+            onClick={signOut}
+            className="ml-auto flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-muted"
+          >
+            <LogoutIcon />
+            <span>Logout</span>
+          </button>
+        </div>
+        <nav className="flex gap-1 overflow-x-auto px-3 pb-3 pt-2">
+          {nav.map((item) => (
+            <button
+              key={item.href}
+              type="button"
+              onClick={() => router.push(item.href)}
+              className={`${navButtonClass(pathname === item.href)} shrink-0 whitespace-nowrap`}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </nav>
+      </header>
+
+      {/* Desktop sidebar */}
+      <aside className="hidden w-64 shrink-0 border-r border-border bg-card md:flex md:flex-col">
         <h1 className="px-6 pt-8 text-2xl font-bold text-foreground">{title}</h1>
 
         <nav className="mt-6 flex flex-col gap-1 px-3">
-          {nav.map((item) => {
-            const active = pathname === item.href;
-            return (
-              <button
-                key={item.href}
-                type="button"
-                onClick={() => router.push(item.href)}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
-                  active
-                    ? "bg-primary/10 font-medium"
-                    : "text-foreground hover:bg-muted"
-                }`}
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </button>
-            );
-          })}
+          {nav.map((item) => (
+            <button
+              key={item.href}
+              type="button"
+              onClick={() => router.push(item.href)}
+              className={navButtonClass(pathname === item.href)}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </button>
+          ))}
         </nav>
 
         <div className="flex-1" />
@@ -80,7 +107,7 @@ const AppShell = ({
             onClick={signOut}
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-muted"
           >
-            {<LogoutIcon />}
+            <LogoutIcon />
             <span>Logout</span>
           </button>
         </div>

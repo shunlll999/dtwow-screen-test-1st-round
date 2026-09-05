@@ -9,3 +9,5 @@ export { HomeIcon } from "./HomeIcon";
 export { HistoryIcon } from "./HistoryIcon";
 export { SwitchIcon } from "./SwitchIcon";
 export { LogoutIcon } from "./LogoutIcon";
+export { XCircleIcon } from "./XCircleIcon";
+export { RibbonIcon } from "./RibbonIcon";

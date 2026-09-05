@@ -9,8 +9,12 @@ describe('ConcertsService', () => {
   let prisma: {
     concert: {
       findMany: jest.Mock;
+      aggregate: jest.Mock;
       create: jest.Mock;
       delete: jest.Mock;
+    };
+    reservationLog: {
+      count: jest.Mock;
     };
   };
 
@@ -18,8 +22,12 @@ describe('ConcertsService', () => {
     prisma = {
       concert: {
         findMany: jest.fn(),
+        aggregate: jest.fn(),
         create: jest.fn(),
         delete: jest.fn(),
+      },
+      reservationLog: {
+        count: jest.fn(),
       },
     };
 
@@ -46,6 +54,35 @@ describe('ConcertsService', () => {
         orderBy: { name: 'asc' },
       });
       expect(result).toBe(concerts);
+    });
+  });
+
+  describe('stats', () => {
+    it('summarises total seats, reserved seats and cancellations', async () => {
+      prisma.concert.aggregate.mockResolvedValue({
+        _sum: { totalSeats: 500, reservedSeats: 120 },
+      });
+      prisma.reservationLog.count.mockResolvedValue(12);
+
+      const result = await service.stats();
+
+      expect(prisma.reservationLog.count).toHaveBeenCalledWith({
+        where: { action: 'CANCEL' },
+      });
+      expect(result).toEqual({ totalSeats: 500, reserved: 120, cancelled: 12 });
+    });
+
+    it('falls back to zero when there are no concerts', async () => {
+      prisma.concert.aggregate.mockResolvedValue({
+        _sum: { totalSeats: null, reservedSeats: null },
+      });
+      prisma.reservationLog.count.mockResolvedValue(0);
+
+      await expect(service.stats()).resolves.toEqual({
+        totalSeats: 0,
+        reserved: 0,
+        cancelled: 0,
+      });
     });
   });
 

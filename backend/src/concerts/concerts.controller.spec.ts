@@ -6,6 +6,7 @@ describe('ConcertsController', () => {
   let controller: ConcertsController;
   let concertsService: {
     findAll: jest.Mock;
+    stats: jest.Mock;
     create: jest.Mock;
     remove: jest.Mock;
   };
@@ -13,6 +14,7 @@ describe('ConcertsController', () => {
   beforeEach(async () => {
     concertsService = {
       findAll: jest.fn(),
+      stats: jest.fn(),
       create: jest.fn(),
       remove: jest.fn(),
     };
@@ -31,6 +33,14 @@ describe('ConcertsController', () => {
 
     await expect(controller.findAll()).resolves.toBe(concerts);
     expect(concertsService.findAll).toHaveBeenCalled();
+  });
+
+  it('delegates stats to ConcertsService', async () => {
+    const summary = { totalSeats: 500, reserved: 120, cancelled: 12 };
+    concertsService.stats.mockResolvedValue(summary);
+
+    await expect(controller.stats()).resolves.toBe(summary);
+    expect(concertsService.stats).toHaveBeenCalled();
   });
 
   it('delegates create to ConcertsService with the dto', async () => {
