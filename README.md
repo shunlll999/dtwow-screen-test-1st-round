@@ -22,3 +22,10 @@
 
 # How to run test and report
 ```npm --prefix backend run test:dashboard```
+- check report by http://localhost:4500
+
+# DEV — hot reload
+docker compose up
+
+# PROD — build frontend แล้ว start
+docker compose -f docker-compose.yml up --build

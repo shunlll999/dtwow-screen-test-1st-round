@@ -1,0 +1,15 @@
+# โหมด dev — โหลดอัตโนมัติเมื่อรัน `docker compose up`
+# override เฉพาะ frontend ให้เป็น next dev + hot reload
+services:
+  frontend:
+    build:
+      target: dev
+    command: npm run dev
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+      - frontend_next_cache:/app/.next
+
+volumes:
+  frontend_node_modules:
+  frontend_next_cache:
