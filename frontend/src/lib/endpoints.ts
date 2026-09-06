@@ -34,6 +34,6 @@ export const reservationsApi = {
     api<{ concertId: string; cancelled: boolean }>(`/reservations/${concertId}`, {
       method: 'DELETE',
     }),
-  myHistory: () => api<HistoryEntry[]>('/reservations/me/history'),
-  allHistory: () => api<HistoryEntry[]>('/reservations/history'),
+  myHistory: () => api<HistoryEntry[]>('/reservations/me'),
+  allHistory: () => api<HistoryEntry[]>('/reservations/audit'),
 };
