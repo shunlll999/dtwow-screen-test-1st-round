@@ -13,3 +13,6 @@ export { XCircleIcon } from "./XCircleIcon";
 export { RibbonIcon } from "./RibbonIcon";
 export { TrashIcon } from "./TrashIcon";
 export { SaveIcon } from "./SaveIcon";
+export { CheckIcon } from "./CheckIcon";
+export { CrossIcon } from "./CrossIcon";
+export { InfoIcon } from "./InfoIcon";

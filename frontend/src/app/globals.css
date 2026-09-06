@@ -37,3 +37,18 @@ body {
   color: var(--color-foreground);
   font-family: Arial, Roboto, Helvetica, sans-serif;
 }
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.toast-enter {
+  animation: toast-in 0.2s ease-out;
+}

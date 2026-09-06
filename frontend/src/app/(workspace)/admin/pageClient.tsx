@@ -8,6 +8,7 @@ import { ApiError } from "@/lib/api";
 import { concertsApi } from "@/lib/endpoints";
 import { useResource } from "@/hooks/useResource";
 import type { Concert, CreateConcertInput } from "@/lib/types";
+import { useToast } from "@/lib/toast-context";
 
 const loadDashboard = async () => {
   const [concerts, stats] = await Promise.all([
@@ -23,6 +24,7 @@ const TABS: TabItem[] = [
 ];
 
 const AdminPageClient = () => {
+  const toast = useToast();
   const { data, error, loading, reload } = useResource(loadDashboard);
   const [tab, setTab] = useState<string>("overview");
   const [pendingDelete, setPendingDelete] = useState<Concert | null>(null);
@@ -35,10 +37,11 @@ const AdminPageClient = () => {
   const handleCreate = useCallback(
     async (input: CreateConcertInput) => {
       await concertsApi.create(input);
+      toast.success("Concert created successfully!");
       reload();
       setTab("overview");
     },
-    [reload],
+    [reload, toast],
   );
 
   const requestDelete = useCallback((concert: Concert) => {
@@ -54,14 +57,16 @@ const AdminPageClient = () => {
       await concertsApi.remove(pendingDelete.id);
       setPendingDelete(null);
       reload();
+      toast.success("Concert deleted successfully!");
     } catch (cause) {
       setActionError(
         cause instanceof ApiError ? cause.message : "Failed to delete concert.",
       );
+      toast.error("Failed to delete concert.");
     } finally {
       setDeleting(false);
     }
-  }, [pendingDelete, reload]);
+  }, [pendingDelete, reload, toast]);
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-6 sm:gap-8 sm:px-6 sm:py-8 lg:px-8">
