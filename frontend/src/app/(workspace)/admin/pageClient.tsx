@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { StatCard, Tabs, type TabItem } from "@/components/ui";
+import { ConfirmModal, StatCard, Tabs, type TabItem } from "@/components/ui";
 import { RibbonIcon, UserIcon, XCircleIcon } from "@/components/icons";
 import { ConcertCard, ConcertCreateForm } from "@/components/concerts";
 import { ApiError } from "@/lib/api";
@@ -25,7 +25,8 @@ const TABS: TabItem[] = [
 const AdminPageClient = () => {
   const { data, error, loading, reload } = useResource(loadDashboard);
   const [tab, setTab] = useState<string>("overview");
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<Concert | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
 
   const stats = data?.stats ?? null;
@@ -40,24 +41,27 @@ const AdminPageClient = () => {
     [reload],
   );
 
-  const handleDelete = useCallback(
-    async (concert: Concert) => {
-      if (!window.confirm(`Delete "${concert.name}"?`)) return;
-      setActionError(null);
-      setDeletingId(concert.id);
-      try {
-        await concertsApi.remove(concert.id);
-        reload();
-      } catch (cause) {
-        setActionError(
-          cause instanceof ApiError ? cause.message : "Failed to delete concert.",
-        );
-      } finally {
-        setDeletingId(null);
-      }
-    },
-    [reload],
-  );
+  const requestDelete = useCallback((concert: Concert) => {
+    setActionError(null);
+    setPendingDelete(concert);
+  }, []);
+
+  const confirmDelete = useCallback(async () => {
+    if (!pendingDelete) return;
+    setActionError(null);
+    setDeleting(true);
+    try {
+      await concertsApi.remove(pendingDelete.id);
+      setPendingDelete(null);
+      reload();
+    } catch (cause) {
+      setActionError(
+        cause instanceof ApiError ? cause.message : "Failed to delete concert.",
+      );
+    } finally {
+      setDeleting(false);
+    }
+  }, [pendingDelete, reload]);
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-6 sm:gap-8 sm:px-6 sm:py-8 lg:px-8">
@@ -106,8 +110,8 @@ const AdminPageClient = () => {
                 <li key={concert.id}>
                   <ConcertCard
                     concert={concert}
-                    onDelete={handleDelete}
-                    deleting={deletingId === concert.id}
+                    onDelete={requestDelete}
+                    deleting={deleting && pendingDelete?.id === concert.id}
                   />
                 </li>
               ))}
@@ -119,6 +123,17 @@ const AdminPageClient = () => {
           <ConcertCreateForm onCreate={handleCreate} />
         </section>
       )}
+
+      <ConfirmModal
+        open={pendingDelete !== null}
+        title="Are you sure to delete?"
+        message={pendingDelete ? `“${pendingDelete.name}”` : null}
+        confirmLabel="Yes, Delete"
+        cancelLabel="Cancel"
+        loading={deleting}
+        onConfirm={confirmDelete}
+        onCancel={() => setPendingDelete(null)}
+      />
     </div>
   );
 };
