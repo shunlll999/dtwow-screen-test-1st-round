@@ -4,6 +4,7 @@ import { dashboardPathFor, useAuth } from "@/app/(auth)/AuthProvider";
 import { Role } from "@/lib/types";
 import { usePathname, useRouter } from "next/navigation";
 import { HistoryIcon, HomeIcon, LogoutIcon, SwitchIcon } from "../icons";
+import Link from "next/dist/client/link";
 
 type NavItem = {
   label: string;
@@ -56,7 +57,7 @@ const AppShell = ({
       {/* Mobile top bar */}
       <header className="md:hidden border-b border-border bg-card">
         <div className="flex items-center gap-3 px-4 pt-4">
-          <h1 className="text-xl font-bold text-foreground">{title}</h1>
+          <h1 className="text-xl font-bold text-foreground"><Link href="/">{title}</Link></h1>
           <button
             type="button"
             onClick={signOut}
@@ -83,7 +84,7 @@ const AppShell = ({
 
       {/* Desktop sidebar */}
       <aside className="hidden w-64 shrink-0 border-r border-border bg-card md:flex md:flex-col">
-        <h1 className="px-6 pt-8 text-2xl font-bold text-foreground">{title}</h1>
+        <h1 className="px-6 pt-8 text-2xl font-bold text-foreground"><Link href="/">{title}</Link></h1>
 
         <nav className="mt-6 flex flex-col gap-1 px-3">
           {nav.map((item) => (
