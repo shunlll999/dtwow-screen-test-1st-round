@@ -28,7 +28,7 @@ export const ConcertCard = ({
 
   return (
     <article className="rounded-[10px] border border-border bg-card p-5 sm:p-6">
-      <h3 className="text-xl font-bold text-primary sm:text-2xl">{concert.name}</h3>
+      <h3 className="text-xl font-bold text-primary-submit sm:text-2xl">{concert.name}</h3>
       <hr className="my-4 border-border" />
 
       <p className="text-sm leading-relaxed text-foreground sm:text-base">

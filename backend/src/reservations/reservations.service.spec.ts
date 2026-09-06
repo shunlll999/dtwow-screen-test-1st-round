@@ -182,7 +182,7 @@ describe('ReservationsService', () => {
       const result = await service.findAllHistory();
 
       expect(prisma.reservationLog.findMany).toHaveBeenCalledWith({
-        include: { user: { select: { id: true, email: true } } },
+        include: { user: { select: { id: true, name: true, email: true } } },
         orderBy: { createdAt: 'desc' },
       });
       expect(result).toBe(logs);

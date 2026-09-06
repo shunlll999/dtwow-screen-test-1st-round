@@ -91,7 +91,7 @@ export class ReservationsService {
 
   findAllHistory() {
     return this.prisma.reservationLog.findMany({
-      include: { user: { select: { id: true, email: true } } },
+      include: { user: { select: { id: true, name: true, email: true } } },
       orderBy: { createdAt: 'desc' },
     });
   }

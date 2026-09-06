@@ -1,4 +1,5 @@
 export { ButtonView } from "./Button";
+export { ConfirmModal } from "./ConfirmModal";
 export { PageSpinner } from "./States";
 export { InputView } from "./Input";
 export { StatCard } from "./StatCard";
