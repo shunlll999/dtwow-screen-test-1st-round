@@ -1,9 +1,13 @@
 "use client";
 
-import { StatCard } from "@/components/ui";
+import { useCallback, useState } from "react";
+import { StatCard, Tabs, type TabItem } from "@/components/ui";
 import { RibbonIcon, UserIcon, XCircleIcon } from "@/components/icons";
+import { ConcertCard, ConcertCreateForm } from "@/components/concerts";
+import { ApiError } from "@/lib/api";
 import { concertsApi } from "@/lib/endpoints";
 import { useResource } from "@/hooks/useResource";
+import type { Concert, CreateConcertInput } from "@/lib/types";
 
 const loadDashboard = async () => {
   const [concerts, stats] = await Promise.all([
@@ -13,10 +17,47 @@ const loadDashboard = async () => {
   return { concerts, stats };
 };
 
+const TABS: TabItem[] = [
+  { key: "overview", label: "Overview" },
+  { key: "create", label: "Create" },
+];
+
 const AdminPageClient = () => {
-  const { data, error, loading } = useResource(loadDashboard);
+  const { data, error, loading, reload } = useResource(loadDashboard);
+  const [tab, setTab] = useState<string>("overview");
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+
   const stats = data?.stats ?? null;
   const concerts = data?.concerts ?? [];
+
+  const handleCreate = useCallback(
+    async (input: CreateConcertInput) => {
+      await concertsApi.create(input);
+      reload();
+      setTab("overview");
+    },
+    [reload],
+  );
+
+  const handleDelete = useCallback(
+    async (concert: Concert) => {
+      if (!window.confirm(`Delete "${concert.name}"?`)) return;
+      setActionError(null);
+      setDeletingId(concert.id);
+      try {
+        await concertsApi.remove(concert.id);
+        reload();
+      } catch (cause) {
+        setActionError(
+          cause instanceof ApiError ? cause.message : "Failed to delete concert.",
+        );
+      } finally {
+        setDeletingId(null);
+      }
+    },
+    [reload],
+  );
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-6 sm:gap-8 sm:px-6 sm:py-8 lg:px-8">
@@ -41,100 +82,43 @@ const AdminPageClient = () => {
         />
       </div>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-semibold text-primary sm:text-xl">Concerts</h2>
+      <Tabs items={TABS} active={tab} onChange={setTab} />
 
-        {error ? (
-          <p className="rounded-[8px] bg-danger/10 px-4 py-3 text-sm text-danger">
-            {error}
-          </p>
-        ) : loading ? (
-          <p className="text-sm text-muted-foreground">Loading concerts…</p>
-        ) : concerts.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No concerts yet.</p>
-        ) : (
-          <>
-            {/* Mobile: stacked cards */}
-            <ul className="flex flex-col gap-3 md:hidden">
-              {concerts.map((concert) => {
-                const available = concert.totalSeats - concert.reservedSeats;
-                return (
-                  <li
-                    key={concert.id}
-                    className="rounded-[10px] border border-border bg-card p-4"
-                  >
-                    <p className="font-medium text-foreground">{concert.name}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      {concert.description}
-                    </p>
-                    <dl className="mt-3 grid grid-cols-3 gap-2 text-center text-sm">
-                      <div className="rounded-[8px] bg-muted px-2 py-2">
-                        <dt className="text-xs text-muted-foreground">Reserved</dt>
-                        <dd className="font-semibold tabular-nums">
-                          {concert.reservedSeats}
-                        </dd>
-                      </div>
-                      <div className="rounded-[8px] bg-muted px-2 py-2">
-                        <dt className="text-xs text-muted-foreground">Total</dt>
-                        <dd className="font-semibold tabular-nums">
-                          {concert.totalSeats}
-                        </dd>
-                      </div>
-                      <div className="rounded-[8px] bg-muted px-2 py-2">
-                        <dt className="text-xs text-muted-foreground">Available</dt>
-                        <dd className="font-semibold tabular-nums">{available}</dd>
-                      </div>
-                    </dl>
-                  </li>
-                );
-              })}
+      {tab === "overview" ? (
+        <section className="flex flex-col gap-4">
+          {actionError ? (
+            <p className="rounded-[8px] bg-danger/10 px-4 py-3 text-sm text-danger">
+              {actionError}
+            </p>
+          ) : null}
+
+          {error ? (
+            <p className="rounded-[8px] bg-danger/10 px-4 py-3 text-sm text-danger">
+              {error}
+            </p>
+          ) : loading ? (
+            <p className="text-sm text-muted-foreground">Loading concerts…</p>
+          ) : concerts.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No concerts yet.</p>
+          ) : (
+            <ul className="flex flex-col gap-4">
+              {concerts.map((concert) => (
+                <li key={concert.id}>
+                  <ConcertCard
+                    concert={concert}
+                    onDelete={handleDelete}
+                    deleting={deletingId === concert.id}
+                  />
+                </li>
+              ))}
             </ul>
-
-            {/* Desktop: table */}
-            <div className="hidden overflow-x-auto rounded-[10px] border border-border bg-card md:block">
-              <table className="w-full text-left text-sm">
-                <thead>
-                  <tr className="border-b border-border text-muted-foreground">
-                    <th className="px-4 py-3 font-medium">Name</th>
-                    <th className="px-4 py-3 font-medium">Description</th>
-                    <th className="px-4 py-3 font-medium text-right">Reserved</th>
-                    <th className="px-4 py-3 font-medium text-right">Total seats</th>
-                    <th className="px-4 py-3 font-medium text-right">Available</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {concerts.map((concert) => {
-                    const available =
-                      concert.totalSeats - concert.reservedSeats;
-                    return (
-                      <tr
-                        key={concert.id}
-                        className="border-b border-border last:border-0"
-                      >
-                        <td className="px-4 py-3 font-medium text-foreground">
-                          {concert.name}
-                        </td>
-                        <td className="max-w-xs px-4 py-3 text-muted-foreground">
-                          {concert.description}
-                        </td>
-                        <td className="px-4 py-3 text-right tabular-nums">
-                          {concert.reservedSeats}
-                        </td>
-                        <td className="px-4 py-3 text-right tabular-nums">
-                          {concert.totalSeats}
-                        </td>
-                        <td className="px-4 py-3 text-right tabular-nums">
-                          {available}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </>
-        )}
-      </section>
+          )}
+        </section>
+      ) : (
+        <section>
+          <ConcertCreateForm onCreate={handleCreate} />
+        </section>
+      )}
     </div>
   );
 };

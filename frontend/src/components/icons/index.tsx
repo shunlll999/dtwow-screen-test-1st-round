@@ -11,3 +11,5 @@ export { SwitchIcon } from "./SwitchIcon";
 export { LogoutIcon } from "./LogoutIcon";
 export { XCircleIcon } from "./XCircleIcon";
 export { RibbonIcon } from "./RibbonIcon";
+export { TrashIcon } from "./TrashIcon";
+export { SaveIcon } from "./SaveIcon";
